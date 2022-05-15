@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -29,6 +28,11 @@ class MyApp extends StatelessWidget {
 
 class Home extends HookWidget  {
 
+  static const tags = <String>[
+    'Profile',
+    'About',
+  ];
+
   final controller = Get.find<HomeController>();
 
   Home({Key? key}) : super(key: key);
@@ -42,8 +46,19 @@ class Home extends HookWidget  {
           controller.scrollProgress = scrollController.position.extentBefore / (scrollController.position.extentBefore + scrollController.position.extentAfter);
         }
         scrollController.addListener(onScrollUpdated);
+        final indexSub = controller._tagIndex.listen(
+          (idx) {
+            final progress = idx / (tags.length - 1);
+            scrollController.animateTo(
+              progress * (scrollController.position.extentBefore + scrollController.position.extentAfter),
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeInOutCubic,
+            );
+          }
+        );
         return ()  {
           scrollController.removeListener(onScrollUpdated);
+          indexSub.cancel();
         };
       }
     );
@@ -54,6 +69,7 @@ class Home extends HookWidget  {
             height: Get.size.height,
             child: SingleChildScrollView(
               controller: scrollController,
+              physics: const NeverScrollableScrollPhysics(),
               child: Column(
                 children: const [
                   ProfilePage(),
@@ -67,10 +83,7 @@ class Home extends HookWidget  {
             child: Padding(
               padding: const EdgeInsets.only(left: 34.0),
               child: PageTags(
-                tags: const <String>[
-                  'Profile',
-                  'About',
-                ],
+                tags: tags,
               ),
             ),
           ),
@@ -310,7 +323,24 @@ class PageTags extends HookWidget  {
         return bound;
       }
     ).reduce((rect1, rect2) => rect1.expandToInclude(rect2)).size;
-    
+  }
+
+  int _gesture(Offset actionOffset)  {
+    var offset = Offset.zero;
+    return PageTagsPainter(
+      tags: tags,
+      selectionOffset: Offset.zero,
+      style: style,
+      padding: padding,
+    ).textPainters.map(
+      (textPainter)  {
+        final bound = offset & textPainter.size;
+        offset = bound.bottomLeft + Offset(0.0, padding);
+        return bound;
+      }
+    ).toList().indexWhere(
+      (bound) => bound.contains(actionOffset)
+    );
   }
 
   @override
@@ -356,22 +386,27 @@ class PageTags extends HookWidget  {
         };
       }
     );
-    return SizedBox.fromSize(
-      size: size,
-      child: ValueListenableBuilder<Color?>(
-        valueListenable: colorNotifier,
-        builder: (context, color, _) => ValueListenableBuilder<Offset>(
-          valueListenable: offsetNotifier,
-          builder: (context, selectionOffset, child) => CustomPaint(
-            painter: PageTagsPainter(
-              tags: tags,
-              selectionOffset: selectionOffset,
-              tagColor: color,
-              style: style,
-              padding: padding,
+    return GestureDetector(
+      onTapDown: (details) {
+        controller.tagIndex = _gesture(details.localPosition);
+      },
+      child: SizedBox.fromSize(
+        size: size,
+        child: ValueListenableBuilder<Color?>(
+          valueListenable: colorNotifier,
+          builder: (context, color, _) => ValueListenableBuilder<Offset>(
+            valueListenable: offsetNotifier,
+            builder: (context, selectionOffset, child) => CustomPaint(
+              painter: PageTagsPainter(
+                tags: tags,
+                selectionOffset: selectionOffset,
+                tagColor: color,
+                style: style,
+                padding: padding,
+              ),
+              child: Container(),
+              willChange: true,
             ),
-            child: Container(),
-            willChange: true,
           ),
         ),
       ),

@@ -7,4 +7,9 @@ class HomeController  extends GetxController  {
     _scrollProgress.value = progress;
   }
 
+  final _tagIndex = 0.obs;
+  set tagIndex(int tag)  {
+    _tagIndex.value = tag;
+  }
+
 }
