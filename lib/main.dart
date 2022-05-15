@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
-import 'package:rive/rive.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 part 'config.dart';
@@ -55,87 +55,9 @@ class Home extends HookWidget  {
             child: SingleChildScrollView(
               controller: scrollController,
               child: Column(
-                children: [
-                  SizedBox.fromSize(
-                    size: Get.size,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xff303030),
-                      ),
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Wrap(
-                              direction: Axis.vertical,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                const CircleAvatar(
-                                  backgroundImage: AssetImage('assets/profile.jpg'),
-                                  radius: 125,
-                                ),
-                                const Padding(padding: EdgeInsets.only(top: 21.0)),
-                                const Text('Saw Thiha',
-                                  style: TextStyle(
-                                    fontSize: 69,
-                                    color: ColorPalette.contrast,
-                                  ),
-                                ),
-                                const Text('Software Engineer',
-                                  style: TextStyle(
-                                    fontSize: 34,
-                                    color: ColorPalette.contrast,
-                                  ),
-                                ),
-                                const Padding(padding: EdgeInsets.only(top: 27.0)),
-                                Wrap(
-                                  direction: Axis.horizontal,
-                                  spacing: 21.0,
-                                  children: [
-                                    for(var entry in Config.socialMediaLinks.entries)
-                                      SocialMediaLinkIcon(
-                                        iconAsset: entry.value,
-                                        link: entry.key,
-                                      ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox.fromSize(
-                    size: Get.size,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xfffafafa),
-                      ),
-                      child: Center(
-                        child: SizedBox.fromSize(
-                          size: const Size(400, 400),
-                          child: Container(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox.fromSize(
-                    size: Get.size,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xff303030),
-                      ),
-                    ),
-                  ),
-                  SizedBox.fromSize(
-                    size: Get.size,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xfffafafa),
-                      ),
-                    ),
-                  ),
+                children: const [
+                  ProfilePage(),
+                  AboutPage(),
                 ],
               ),
             ),
@@ -144,7 +66,12 @@ class Home extends HookWidget  {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.only(left: 34.0),
-              child: PageTags(),
+              child: PageTags(
+                tags: const <String>[
+                  'Profile',
+                  'About',
+                ],
+              ),
             ),
           ),
         ],
@@ -152,6 +79,136 @@ class Home extends HookWidget  {
     );
   }
 
+}
+
+class ProjectPage extends StatelessWidget {
+  const ProjectPage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.fromSize(
+      size: Get.size,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xfffafafa),
+        ),
+      ),
+    );
+  }
+}
+
+class AcademicPage extends StatelessWidget {
+  const AcademicPage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.fromSize(
+      size: Get.size,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xff303030),
+        ),
+      ),
+    );
+  }
+}
+
+class AboutPage extends StatelessWidget {
+
+  const AboutPage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => FullscreenContainer(
+    color: ColorPalette.contrast,
+    child: Center(
+      child: SizedBox.fromSize(
+        size: const Size(400, 400),
+        child: Container(),
+      ),
+    ),
+  );
+}
+
+class ProfilePage extends StatelessWidget  {
+
+  const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => FullscreenContainer(
+    color: ColorPalette.primary,
+    child: Stack(
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: Wrap(
+            direction: Axis.vertical,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const CircleAvatar(
+                backgroundImage: AssetImage('assets/profile.jpg'),
+                radius: 125,
+              ),
+              const Padding(padding: EdgeInsets.only(top: 21.0)),
+              const Text('Saw Thiha',
+                style: TextStyle(
+                  fontSize: 69,
+                  color: ColorPalette.contrast,
+                ),
+              ),
+              const Text('Software Engineer',
+                style: TextStyle(
+                  fontSize: 34,
+                  color: ColorPalette.contrast,
+                ),
+              ),
+              const Padding(padding: EdgeInsets.only(top: 27.0)),
+              Wrap(
+                direction: Axis.horizontal,
+                spacing: 21.0,
+                children: [
+                  for(var entry in Config.socialMediaLinks.entries)
+                    SocialMediaLinkIcon(
+                      iconAsset: entry.value,
+                      link: entry.key,
+                    ),
+                ],
+              )
+            ],
+          ),
+        )
+      ],
+    ),
+  );
+
+}
+
+class FullscreenContainer extends StatelessWidget {
+
+  final Color? color;
+  final Widget child;
+
+  const FullscreenContainer({
+    Key? key,
+    this.color,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => SizedBox.fromSize(
+    size: Get.size,
+    child: Container(
+      decoration: BoxDecoration(
+        color: color,
+      ),
+      child: child,
+    ),
+  );
 }
 
 class SocialMediaLinkIcon extends StatelessWidget {
@@ -177,14 +234,84 @@ class SocialMediaLinkIcon extends StatelessWidget {
   }
 }
 
+extension IntervalOps on Interval  {
+
+  bool contains(double value) =>  value >= begin && value <= end;
+
+}
+
+class IntervalAnimation<T>  {
+
+  final Interval interval;
+  final Tween<T> tween;
+  final Animation<T> animation;
+  final Animation<double> parent;
+  final Curve curve;
+
+  IntervalAnimation(
+    {
+      required this.interval,
+      required this.tween,
+      required this.parent,
+      this.curve = Curves.linear,
+    }
+  ): animation = tween.animate(
+    CurvedAnimation(
+      parent: CurvedAnimation(parent: parent, curve: interval),
+      curve: curve,
+    ),
+  );
+
+  T? get value => interval.contains(parent.value) ? animation.value: null;
+
+}
+
+extension IntervalAnimationCompostion<T> on Iterable<IntervalAnimation<T>>  {
+
+  T? get value => map((animation) => animation.value)
+    .firstWhere(
+      (value) => value != null,
+      orElse: () => null,
+    );
+
+}
+
 class PageTags extends HookWidget  {
 
-  static const size = Size(160, 266);
-  static const tags = <String>['Profile', 'About', 'Academic', 'Projects'];
+  late final Size size;
+  final List<String> tags;
+  final double padding;
+  final TextStyle style;
 
   final controller = Get.find<HomeController>();
 
-  PageTags({Key? key}) : super(key: key);
+  PageTags({Key? key,
+    required this.tags,
+    this.padding = 34.0,
+    this.style = const TextStyle(
+      fontSize: 34.0,
+      fontWeight: FontWeight.normal,
+    ),
+  }) : super(key: key)  {
+    size = _calculateSize();
+  }
+
+  Size _calculateSize()  {
+    var offset = Offset.zero;
+    return PageTagsPainter(
+      tags: tags,
+      selectionOffset: Offset.zero,
+      style: style,
+      padding: padding,
+    ).textPainters.map(
+      (textPainter)  {
+        final bound = offset & textPainter.size;
+        offset = bound.bottomLeft + Offset(0.0, padding);
+        return bound;
+      }
+    ).reduce((rect1, rect2) => rect1.expandToInclude(rect2)).size;
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,36 +326,17 @@ class PageTags extends HookWidget  {
     ).animate(
      animationController,
     );
-    final colorAnimations = [
-      ColorTween(
-        begin: const Color(0xfffafafa),
-        end: const Color(0xff303030),
-      ).animate(
-        CurvedAnimation(
-          parent: animationController,
-          curve: const Interval(0.0, 0.33),
+    final colorIntervals = [
+      IntervalAnimation(
+        interval: const Interval(0.0, 1),
+        tween: ColorTween(
+          begin: ColorPalette.contrast,
+          end: ColorPalette.primary
         ),
-      ),
-      ColorTween(
-        begin: const Color(0xff303030),
-        end: const Color(0xfffafafa),
-      ).animate(
-        CurvedAnimation(
-          parent: animationController,
-          curve: const Interval(0.33, 0.66),
-        ),
-      ),
-      ColorTween(
-        begin: const Color(0xfffafafa),
-        end: const Color(0xff303030),
-      ).animate(
-        CurvedAnimation(
-          parent: animationController,
-          curve: const Interval(0.66, 1),
-        ),
+        parent: animationController,
       ),
     ];
-    final colorNotifier = useValueNotifier(const Color(0xfffafafa));
+    final colorNotifier = useValueNotifier(colorIntervals.value);
     final offsetNotifier = useValueNotifier(Offset.zero);
     useEffect(
       ()  {
@@ -239,9 +347,7 @@ class PageTags extends HookWidget  {
         );
         void onSelectionAnimation()  {
           offsetNotifier.value = selectionAnimation.value;
-          colorNotifier.value = animationController.value < 0.33 ? colorAnimations[0].value!
-            : animationController.value < 0.66 ? colorAnimations[1].value!
-            : colorAnimations[2].value!;
+          colorNotifier.value = colorIntervals.value;
         }
         animationController.addListener(onSelectionAnimation);
         return ()  {
@@ -252,7 +358,7 @@ class PageTags extends HookWidget  {
     );
     return SizedBox.fromSize(
       size: size,
-      child: ValueListenableBuilder<Color>(
+      child: ValueListenableBuilder<Color?>(
         valueListenable: colorNotifier,
         builder: (context, color, _) => ValueListenableBuilder<Offset>(
           valueListenable: offsetNotifier,
@@ -261,6 +367,8 @@ class PageTags extends HookWidget  {
               tags: tags,
               selectionOffset: selectionOffset,
               tagColor: color,
+              style: style,
+              padding: padding,
             ),
             child: Container(),
             willChange: true,
@@ -276,22 +384,27 @@ class PageTagsPainter extends CustomPainter  {
 
   final List<String> tags;
   final Offset selectionOffset;
-  final Color tagColor;
+  final Color? tagColor;
+  final double padding;
+  final TextStyle style;
 
   PageTagsPainter({
     required this.tags,
     required this.selectionOffset,
-    required this.tagColor,
+    required this.style,
+    required this.padding,
+    this.tagColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final padding = size.height / tags.length;
     canvas.saveLayer(Offset.zero & size, Paint()..color = const Color(0xfffafafa));
 
       // Draw Tags
-      for (var i = 0; i < tags.length; i++) {
-        paintTag(tags[i], Offset(0, i * padding), canvas, size);
+      var offset = Offset.zero;
+      for (var textPainter in textPainters) {
+        textPainter.paint(canvas, offset);
+        offset = (offset & textPainter.size).bottomLeft + Offset(0.0, padding);
       }
 
       canvas.drawRect(selectionOffset & Size(size.width, size.height / tags.length),
@@ -302,14 +415,28 @@ class PageTagsPainter extends CustomPainter  {
     canvas.restore();
   }
 
+  Iterable<TextPainter> get textPainters => tags.map(
+    (tag) => TextPainter(
+      text: TextSpan(
+        text: tag,
+        style: style.copyWith(
+          color: tagColor,
+        ),
+      ),
+      textAlign: TextAlign.start,
+      textDirection: TextDirection.ltr
+    )..layout(
+      minWidth: 0.0,
+      maxWidth: double.infinity,
+    ),
+  );
+
   void paintTag(String text, Offset offset, Canvas canvas, Size size)  {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: TextStyle(
-          color: tagColor,
-          fontSize: 34,
-          fontWeight: FontWeight.normal,
+        style: style.copyWith(
+          color: tagColor
         ),
       ),
       textAlign: TextAlign.start,
